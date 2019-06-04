@@ -5,21 +5,146 @@ output:
     keep_md: true
 ---
 
+```{r setoptions, echo = TRUE, cache = TRUE}
+```
+
+## Loading required package
+
+library(ggplot2)
+library(hms)
 
 ## Loading and preprocessing the data
 
-
+```{r loadingData}
+acData <- read.csv(file = "activity.csv", header = TRUE)
+```
 
 ## What is mean total number of steps taken per day?
 
+### calculate total of steps taken per day
 
+```{r total}
+tSteps <- aggregate(steps ~ date, acData, FUN = sum)
+```
+
+### Histogram of total steps taken per day
+
+```{r histogram}
+hist(tSteps$steps,
+      main = "Total Steps Taken per Day",
+      xlab = "Number of Steps")
+```
+
+### mean and median of the total steps taken per day
+
+```{r mean and median per day}
+meanSteps <- mean(tSteps$steps, na.rm = TRUE)
+medianSteps <- median(tSteps$steps, na.rm = TRUE)
+```
 
 ## What is the average daily activity pattern?
 
+### average daily activity pattern
 
+```{r average daily activity pattern}
+meansin <- aggregate(steps ~ interval, acData, mean)
+```
+
+### time series of daily average activity
+
+```{r time series}
+ggplot(data = meansin, aes(x = interval, y = steps)) +
+     geom_line() +
+     ggtitle("Average Daily Activity Pattern") +
+     xlab("5-minute Interval") +
+     ylab("Average Steps Numbers") +
+     theme(plot.title = element_text(hjust = 0.5))
+```
+
+### max steps by interval
+
+```{r max steps per interval}
+maxin <- meansin[which.max(meansin$steps), ]
+```
 
 ## Imputing missing values
 
+### total number of missing values
 
+```{r total NA}
+mvalue <- is.na(acData$steps)
+table(mvalue)
+```
+
+### imputing missing values
+
+```{r imputing NA}
+filled_acData <- transform(acData,
+     steps = ifelse(is.na(acData$steps),
+     meansin$steps[match(acData$interval,
+     meansin$interval)],
+     acData$steps))
+```
+
+### daily steps after imputing missing data
+
+```{r total after imputing}
+filled_interval <- aggregate(steps ~ date, filled_acData, FUN = sum)
+```
+
+### Histogram of daily steps after imputing missing data
+
+```{r Hist after imputing}
+hist(filled_interval$steps,
+      main = "Daily Steps (Imputed Number)",
+      xlab = "Number of Steps")
+```
+
+### mean and median of the total steps taken per day after imputing
+
+```{r mean and median after imputing}
+imMeanSteps <- mean(filled_interval$steps, na.rm = TRUE)
+imMedianSteps <- median(filled_interval$steps, na.rm = TRUE)
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+### differences in new factors
+
+```{r differences in new factors}
+difMean = imMeanSteps - meanSteps
+difMedian = imMedianSteps - medianSteps
+difTotal = sum(filled_interval$steps) - sum(tSteps$steps)
+```
+
+### new factor variable in the dataset with two levels
+
+```{r factor with two levels}
+Day_type <- function(date) {
+         day <- weekdays(date)
+         if (day %in% c('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'))
+         return ("weekeday")
+         else if (day %in% c('Saturday', 'Sunday'))
+         return ("weekend")
+         else
+         stop ("Invalid Date Format.")
+ }
+filled_acData$date <- as.Date(filled_acData$date)
+filled_acData$day <- sapply(filled_acData$date, FUN = Day_type)
+ ```
+ 
+### average steps taken by weekdays and weekend
+```{r average per day_type}
+Dailymean <- aggregate(steps ~ interval + day, filled_acData, mean)
+```
+
+### comparison plot of activity pattern between weekdays and weekend
+```{r gplot}
+ggplot(data = Dailymean, aes(x = interval, y = steps)) +
+         geom_line() +
+         facet_grid(day ~ .) +
+         ggtitle("Average Daily Activity Pattern") +
+         xlab("5-minute Interval") +
+         ylab("Average Steps Numbers") +
+         theme(plot.title = element_text(hjust = 0.5))
+```
