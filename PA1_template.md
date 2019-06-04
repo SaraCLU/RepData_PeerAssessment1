@@ -32,7 +32,7 @@ hist(tSteps$steps,
       xlab = "Number of Steps")
 ```
 
-![](RepData_PeerAssessment1/figure/histogram-1.png)<!-- -->
+![](figure/Steps.png)<!-- -->
 
 ### Mean and median of the total steps taken per day
 
@@ -84,7 +84,7 @@ ggplot(data = meansin, aes(x = interval, y = steps)) +
      theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](RepData_PeerAssessment1/figure/time series-1.png)<!-- -->
+![](figure/Pattern.png)<!-- -->
 
 ### Max steps by interval
 
@@ -138,7 +138,7 @@ hist(filled_interval$steps,
       xlab = "Number of Steps")
 ```
 
-![](RepData_PeerAssessment1/figure/Hist after imputing-1.png)<!-- -->
+![](figure/imputednumber.png)<!-- -->
 
 ### Mean and median of the total steps taken per day after imputing
 
@@ -197,6 +197,6 @@ ggplot(data = Dailymean, aes(x = interval, y = steps)) +
          theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](RepData_PeerAssessment1/figure/gplot-1.png)<!-- -->
+![](figure/pattern2.png)<!-- -->
 
 According to the chart, the subject takes more steps on average during the weekday.
