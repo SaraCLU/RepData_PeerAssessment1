@@ -16,7 +16,7 @@ acData <- read.csv(file = "activity.csv", header = TRUE)
 
 ## What is mean total number of steps taken per day?
 
-### calculate total of steps taken per day
+### Calculate total of steps taken per day
 
 ```{r total}
 tSteps <- aggregate(steps ~ date, acData, FUN = sum)
@@ -30,7 +30,7 @@ hist(tSteps$steps,
       xlab = "Number of Steps")
 ```
 
-### mean and median of the total steps taken per day
+### Mean and median of the total steps taken per day
 
 ```{r mean and median per day}
 meanSteps <- mean(tSteps$steps, na.rm = TRUE)
@@ -41,7 +41,7 @@ On average, the subject walked 10766.19 steps, with a median value of 10765. And
 
 ## What is the average daily activity pattern?
 
-### average daily activity pattern
+### Average daily activity pattern
 
 ```{r average daily activity pattern}
 meansin <- aggregate(steps ~ interval, acData, mean)
@@ -55,7 +55,7 @@ library(ggplot2)
 library(hms)
 ```
 
-### time series of daily average activity
+### Time series of daily average activity
 
 ```{r time series}
 ggplot(data = meansin, aes(x = interval, y = steps)) +
@@ -66,7 +66,7 @@ ggplot(data = meansin, aes(x = interval, y = steps)) +
      theme(plot.title = element_text(hjust = 0.5))
 ```
 
-### max steps by interval
+### Max steps by interval
 
 ```{r max steps per interval}
 maxin <- meansin[which.max(meansin$steps), ]
@@ -75,7 +75,7 @@ According to the output above, the max steps is 206, interval is 835.
 
 ## Imputing missing values
 
-### total number of missing values
+### Total number of missing values
 
 ```{r total NA}
 mvalue <- is.na(acData$steps)
@@ -83,7 +83,7 @@ table(mvalue)
 ```
 The total number of missing value is 2304.
 
-### imputing missing values
+### Imputing missing values
 
 ```{r imputing NA}
 filled_acData <- transform(acData,
@@ -93,7 +93,7 @@ filled_acData <- transform(acData,
      acData$steps))
 ```
 
-### daily steps after imputing missing data
+### Daily steps after imputing missing data
 
 ```{r total after imputing}
 filled_interval <- aggregate(steps ~ date, filled_acData, FUN = sum)
@@ -107,7 +107,7 @@ hist(filled_interval$steps,
       xlab = "Number of Steps")
 ```
 
-### mean and median of the total steps taken per day after imputing
+### Mean and median of the total steps taken per day after imputing
 
 ```{r mean and median after imputing}
 imMeanSteps <- mean(filled_interval$steps, na.rm = TRUE)
@@ -117,7 +117,7 @@ After imputing, the mean is 10766.19 and the median is 10766.19.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-### differences in new factors
+### Differences in new factors
 
 ```{r differences in new factors}
 difMean = imMeanSteps - meanSteps
@@ -127,7 +127,7 @@ difTotal = sum(filled_interval$steps) - sum(tSteps$steps)
 
 Accordingly, the difference of mean is 0, median 1.19, total 86129.51.
 
-### new factor variable in the dataset with two levels
+### New factor variable in the dataset with two levels
 
 ```{r factor with two levels}
 Day_type <- function(date) {
@@ -143,12 +143,12 @@ filled_acData$date <- as.Date(filled_acData$date)
 filled_acData$day <- sapply(filled_acData$date, FUN = Day_type)
  ```
  
-### average steps taken by weekdays and weekend
+### Average steps taken by weekdays and weekend
 ```{r average per day_type}
 Dailymean <- aggregate(steps ~ interval + day, filled_acData, mean)
 ```
 
-### comparison plot of activity pattern between weekdays and weekend
+### Comparison plot of activity pattern between weekdays and weekend
 ```{r gplot}
 ggplot(data = Dailymean, aes(x = interval, y = steps)) +
          geom_line() +
