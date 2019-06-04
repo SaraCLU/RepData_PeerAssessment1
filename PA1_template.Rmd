@@ -8,11 +8,6 @@ output:
 ```{r setoptions, echo = TRUE, cache = TRUE}
 ```
 
-## Loading required package
-
-library(ggplot2)
-library(hms)
-
 ## Loading and preprocessing the data
 
 ```{r loadingData}
@@ -42,12 +37,22 @@ meanSteps <- mean(tSteps$steps, na.rm = TRUE)
 medianSteps <- median(tSteps$steps, na.rm = TRUE)
 ```
 
+On average, the subject walked 10766.19 steps, with a median value of 10765. And the histogram above shows the total number of steps by day.
+
 ## What is the average daily activity pattern?
 
 ### average daily activity pattern
 
 ```{r average daily activity pattern}
 meansin <- aggregate(steps ~ interval, acData, mean)
+```
+
+### Loading required package
+
+```{r required package}
+
+library(ggplot2)
+library(hms)
 ```
 
 ### time series of daily average activity
@@ -66,6 +71,7 @@ ggplot(data = meansin, aes(x = interval, y = steps)) +
 ```{r max steps per interval}
 maxin <- meansin[which.max(meansin$steps), ]
 ```
+According to the output above, the max steps is 206, interval is 835.
 
 ## Imputing missing values
 
@@ -75,6 +81,7 @@ maxin <- meansin[which.max(meansin$steps), ]
 mvalue <- is.na(acData$steps)
 table(mvalue)
 ```
+The total number of missing value is 2304.
 
 ### imputing missing values
 
@@ -106,6 +113,7 @@ hist(filled_interval$steps,
 imMeanSteps <- mean(filled_interval$steps, na.rm = TRUE)
 imMedianSteps <- median(filled_interval$steps, na.rm = TRUE)
 ```
+After imputing, the mean is 10766.19 and the median is 10766.19.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -116,6 +124,8 @@ difMean = imMeanSteps - meanSteps
 difMedian = imMedianSteps - medianSteps
 difTotal = sum(filled_interval$steps) - sum(tSteps$steps)
 ```
+
+Accordingly, the difference of mean is 0, median 1.19, total 86129.51.
 
 ### new factor variable in the dataset with two levels
 
@@ -148,3 +158,5 @@ ggplot(data = Dailymean, aes(x = interval, y = steps)) +
          ylab("Average Steps Numbers") +
          theme(plot.title = element_text(hjust = 0.5))
 ```
+
+According to the chart, the subject takes more steps on average during the weekday.
